@@ -6,7 +6,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.48.1.52935",
-      "templateHash": "6432029617650148697"
+      "templateHash": "10388501780242246197"
     }
   },
   "parameters": {
@@ -80,23 +80,17 @@
     },
     "Memory": {
       "type": "int",
-      "allowedValues": [
-        32768,
-        49152,
-        65536,
-        131072
-      ],
       "minValue": 32768,
       "maxValue": 131072,
       "metadata": {
-        "description": "Memory assigned to the VM in MB. Input values: 32768 MB(32GB), 49152 MB(48GB), 65536 MB(64GB) or 131072 MB(128GB)."
+        "description": "Memory assigned to the VM in MB. Supported range: 32768-131072 MB (32-128 GB)."
       }
     },
     "NumberDataDisks": {
       "type": "int",
       "minValue": 1,
       "metadata": {
-        "description": "Number of data disks to create and attach."
+        "description": "Number of data disks to create and attach. Default: 1"
       }
     },
     "DiskSizeGB": {
@@ -123,7 +117,7 @@
     "LicenseKey": {
       "type": "securestring",
       "metadata": {
-        "description": "Provide GHES license key."
+        "description": "Provide the raw GHES license key."
       }
     },
     "existingContextId": {
@@ -1232,17 +1226,38 @@
         "updateExistingContext"
       ]
     },
+    "capabilityPropagationDelay": {
+      "type": "Microsoft.Resources/deploymentScripts",
+      "apiVersion": "2023-08-01",
+      "name": "ghes-capability-delay",
+      "location": "[variables('Location')]",
+      "kind": "AzureCLI",
+      "properties": {
+        "azCliVersion": "2.89.1",
+        "scriptContent": "sleep 90",
+        "timeout": "PT5M",
+        "cleanupPreference": "Always",
+        "retentionInterval": "P1D",
+        "forceUpdateTag": "[deployment().name]"
+      },
+      "dependsOn": [
+        "cloudTarget"
+      ]
+    },
     "ghesSolutionTemplate": {
       "type": "Microsoft.Edge/solutionTemplates",
       "apiVersion": "2026-03-01",
       "name": "[variables('ghesSolutionTemplateName')]",
       "location": "[variables('Location')]",
       "properties": {
-        "description": "GHES solution template with ARM-resolved Key Vault password references.",
+        "description": "GHES solution template with ARM-resolved Key Vault secret staging.",
         "capabilities": [
           "[variables('infraCapabilityName')]"
         ]
-      }
+      },
+      "dependsOn": [
+        "capabilityPropagationDelay"
+      ]
     },
     "ghesDeployment": {
       "type": "Microsoft.Edge/solutionDeployments",
