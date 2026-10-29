@@ -117,7 +117,7 @@
     "LicenseBase64": {
       "type": "securestring",
       "metadata": {
-        "description": "Base64-encoded GHES license file. Stored across two Key Vault secrets because a real .ghl base64 (~27 KB) exceeds Key Vault's 25,600-char secret value limit."
+        "description": "Base64-encoded GHES license file."
       }
     },
     "existingContextId": {
