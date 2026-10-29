@@ -114,10 +114,10 @@
         "description": "Management-console password."
       }
     },
-    "LicenseKey": {
+    "LicenseBase64": {
       "type": "securestring",
       "metadata": {
-        "description": "Provide the raw GHES license key."
+        "description": "Base64-encoded GHES license file. Stored across two Key Vault secrets because a real .ghl base64 (~27 KB) exceeds Key Vault's 25,600-char secret value limit."
       }
     },
     "existingContextId": {
@@ -996,11 +996,10 @@
         }
       }
     },
-    "licenseBase64": "[base64(parameters('LicenseKey'))]",
-    "licenseLength": "[length(variables('licenseBase64'))]",
+    "licenseLength": "[length(parameters('LicenseBase64'))]",
     "licenseHalf": "[div(variables('licenseLength'), 2)]",
-    "licensePart1": "[substring(variables('licenseBase64'), 0, variables('licenseHalf'))]",
-    "licensePart2": "[substring(variables('licenseBase64'), variables('licenseHalf'), sub(variables('licenseLength'), variables('licenseHalf')))]",
+    "licensePart1": "[substring(parameters('LicenseBase64'), 0, variables('licenseHalf'))]",
+    "licensePart2": "[substring(parameters('LicenseBase64'), variables('licenseHalf'), sub(variables('licenseLength'), variables('licenseHalf')))]",
     "createContext": "[empty(parameters('existingContextId'))]",
     "contextIdParts": "[split(if(variables('createContext'), resourceId('Microsoft.Edge/contexts', variables('contextName')), parameters('existingContextId')), '/')]",
     "existingContextSubscriptionId": "[variables('contextIdParts')[2]]",
