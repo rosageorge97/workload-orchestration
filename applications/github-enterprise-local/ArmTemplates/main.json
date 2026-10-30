@@ -117,7 +117,7 @@
     "LicenseBase64": {
       "type": "securestring",
       "metadata": {
-        "description": "Base64-encoded contents of the GHES .ghl license file. Encode the original file bytes without modifying the file. The template splits the value across two Key Vault secrets to stay within the per-secret size limit."
+        "description": "Base64-encoded GHES .ghl license file."
       }
     },
     "existingContextId": {
